@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo de Subasta — Claudio Izsak Remates</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap');
+
+  :root {
+    --orange: #E05A20;
+    --dark: #1a1a1a;
+    --darker: #111111;
+    --gray: #2a2a2a;
+    --light: #f4f4f2;
+    --mid: #888;
+    --white: #ffffff;
+    --border: #333;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--darker);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--dark);
+    border-bottom: 3px solid var(--orange);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--orange);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 5px;
+    border-radius: 4px;
+  }
+  .logo-icon span {
+    background: var(--white);
+    border-radius: 1px;
+  }
+  .logo-icon span:first-child {
+    background: var(--dark);
+    grid-column: span 2;
+    height: 6px;
+  }
+
+  .logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--mid);
+    text-transform: uppercase;
+  }
+  .logo-text strong {
+    display: block;
+    font-size: 18px;
+    color: var(--white);
+    letter-spacing: 2px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .lot-counter {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    color: var(--mid);
+    letter-spacing: 1px;
+  }
+  .lot-counter strong {
+    color: var(--orange);
+    font-size: 22px;
+  }
+
+  /* BOTONES */
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    padding: 10px 22px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .btn-orange {
+    background: var(--orange);
+    color: var(--white);
+  }
+  .btn-orange:hover { background: #c94d18; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--orange);
+    border: 2px solid var(--orange);
+  }
+  .btn-outline:hover { background: var(--orange); color: var(--white); }
+  .btn-ghost {
+    background: var(--gray);
+    color: var(--mid);
+  }
+  .btn-ghost:hover { background: #333; color: var(--white); }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    min-height: calc(100vh - 70px);
+  }
+
+  /* PANEL IZQUIERDO — FORMULARIO */
+  .form-panel {
+    background: var(--dark);
+    border-right: 1px solid var(--border);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 70px;
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+  }
+
+  .panel-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+
+  /* Número de lote */
+  .lot-number-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .lot-number-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--mid);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .lot-number-input {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    background: var(--gray);
+    border: 2px solid var(--border);
+    color: var(--orange);
+    width: 100px;
+    text-align: center;
+    border-radius: 6px;
+    padding: 4px 8px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .lot-number-input:focus { border-color: var(--orange); }
+
+  /* Upload foto */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--orange);
+    background: rgba(224,90,32,0.06);
+  }
+  .upload-zone img {
+    max-width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .upload-zone input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .upload-icon {
+    font-size: 32px;
+    opacity: 0.4;
+  }
+  .upload-hint {
+    font-size: 12px;
+    color: var(--mid);
+    letter-spacing: 0.5px;
+  }
+
+  /* Campos */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+  .field textarea, .field input[type="text"], .field input[type="number"] {
+    background: var(--gray);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .field textarea:focus,
+  .field input:focus { border-color: var(--orange); }
+  .field textarea { min-height: 100px; }
+
+  .add-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+  }
+
+  /* PANEL DERECHO — LISTA DE LOTES */
+  .lots-panel {
+    padding: 28px 32px;
+  }
+
+  .lots-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .lots-header h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .lots-header span {
+    font-size: 13px;
+    color: var(--mid);
+    letter-spacing: 1px;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 40px;
+    text-align: center;
+    gap: 16px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+  }
+  .empty-icon { font-size: 48px; opacity: 0.3; }
+  .empty-state p {
+    color: var(--mid);
+    font-size: 15px;
+    max-width: 280px;
+    line-height: 1.6;
+  }
+
+  /* GRID DE LOTES */
+  .lots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .lot-card {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .lot-card:hover {
+    border-color: var(--orange);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .lot-card-photo {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    background: var(--gray);
+  }
+  .lot-card-photo-placeholder {
+    width: 100%;
+    height: 180px;
+    background: var(--gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    opacity: 0.3;
+  }
+
+  .lot-card-body {
+    padding: 14px 16px;
+  }
+
+  .lot-card-number {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 4px;
+  }
+
+  .lot-card-desc {
+    font-size: 13px;
+    color: #ccc;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .lot-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.2);
+    border-top: 1px solid var(--border);
+  }
+
+  .lot-card-units {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    color: var(--mid);
+    letter-spacing: 1px;
+  }
+  .lot-card-units strong { color: var(--white); }
+
+  .lot-card-delete {
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .lot-card-delete:hover { color: #e74c3c; background: rgba(231,76,60,0.1); }
+
+  /* FOOTER GENERA PDF */
+  .generate-bar {
+    position: fixed;
+    bottom: 0;
+    left: 380px;
+    right: 0;
+    background: var(--dark);
+    border-top: 2px solid var(--orange);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 50;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  .generate-bar.visible { transform: translateY(0); }
+
+  .generate-info {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    color: var(--mid);
+    letter-spacing: 1px;
+  }
+  .generate-info strong {
+    display: block;
+    font-size: 20px;
+    color: var(--white);
+  }
+
+  .btn-generate {
+    font-size: 16px;
+    padding: 14px 36px;
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-generate:hover { background: #c94d18; transform: translateY(-1px); }
+  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* PROGRESS */
+  .progress-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .progress-overlay.active { display: flex; }
+  .progress-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .progress-bar-wrap {
+    width: 320px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .progress-msg {
+    font-size: 13px;
+    color: var(--mid);
+    letter-spacing: 1px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    top: 90px;
+    right: 24px;
+    background: var(--orange);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    letter-spacing: 1px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    z-index: 300;
+    transform: translateX(120%);
+    transition: transform 0.3s;
+  }
+  .toast.show { transform: translateX(0); }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    .form-panel { position: static; height: auto; }
+    .generate-bar { left: 0; }
+    header { padding: 12px 16px; }
+    .lots-panel { padding: 20px 16px; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--darker); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-area">
+    <div class="logo-icon">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="logo-text">
+      <strong>CLAUDIO IZSAK</strong>
+      Remates · Catálogo Digital
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="lot-counter">
+      <strong id="totalLots">0</strong> lotes cargados
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- PANEL FORMULARIO -->
+  <aside class="form-panel">
+    <div class="panel-title">Nuevo Lote</div>
+
+    <!-- Número de lote -->
+    <div class="lot-number-row">
+      <span class="lot-number-label">Lote N°</span>
+      <input type="number" class="lot-number-input" id="lotNumber" value="1" min="1">
+    </div>
+
+    <!-- Foto -->
+    <div class="field">
+      <label>Fotografía</label>
+      <input type="file" id="photoInputGallery" accept="image/*" style="display:none;">
+      <input type="file" id="photoInputCamera" accept="image/*" capture="environment" style="display:none;">
+      <div class="upload-zone" id="uploadZone" style="cursor:default;">
+        <div id="uploadPlaceholder">
+          <div class="upload-icon">🖼️</div>
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <button type="button" onclick="document.getElementById('photoInputGallery').click()" style="background:var(--orange);color:#fff;border:none;border-radius:4px;padding:9px 18px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;">📁 Galería</button>
+            <button type="button" onclick="document.getElementById('photoInputCamera').click()" style="background:var(--gray);color:#fff;border:1px solid var(--border);border-radius:4px;padding:9px 18px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;">📷 Cámara</button>
+          </div>
+        </div>
+        <img id="photoPreview" style="display:none;max-width:100%;max-height:150px;border-radius:4px;">
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="field">
+      <label>Descripción del lote</label>
+      <textarea id="lotDesc" placeholder="Ej: 42 platos de 25 cm para pastas&#10;38 platos playos de 23 cm&#10;Todo loza, en dos colores"></textarea>
+    </div>
+
+    <!-- Unidades -->
+    <div class="field">
+      <label>Cantidad de unidades</label>
+      <input type="number" id="lotUnits" placeholder="Ej: 87" min="0">
+    </div>
+
+    <button class="btn btn-orange add-btn" onclick="addLot()">+ Agregar Lote</button>
+    <button class="btn btn-ghost" onclick="clearForm()" style="width:100%">Limpiar formulario</button>
+  </aside>
+
+  <!-- PANEL LOTES -->
+  <main class="lots-panel" id="lotsPanel">
+    <div class="lots-header">
+      <h2>Lotes del Catálogo</h2>
+      <span id="lotsSubtitle">Agregá lotes desde el panel izquierdo</span>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">📋</div>
+      <p>El catálogo está vacío. Completá los datos del primer lote y hacé clic en "Agregar Lote".</p>
+    </div>
+
+    <div class="lots-grid" id="lotsGrid" style="display:none;"></div>
+
+    <div style="height: 80px;"></div>
+  </main>
+</div>
+
+<!-- BARRA GENERAR PDF -->
+<div class="generate-bar" id="generateBar">
+  <div class="generate-info">
+    <strong id="generateCount">0 lotes listos</strong>
+    Listo para generar el catálogo PDF
+  </div>
+  <button class="btn-generate" onclick="generatePDF()" id="generateBtn">
+    ⬇ Generar Catálogo PDF
+  </button>
+</div>
+
+<!-- PROGRESS OVERLAY -->
+<div class="progress-overlay" id="progressOverlay">
+  <div class="progress-title">Generando catálogo...</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-msg" id="progressMsg">Preparando...</div>
+  <div style="font-size:12px;color:var(--mid);text-align:center;max-width:280px;line-height:1.6;">Al terminar se abre el PDF en nueva pestaña.<br>Tocá <strong style="color:var(--white)">⬆ Compartir → Guardar en Archivos</strong></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL PDF -->
+<div id="pdfModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;">
+  <div style="background:#1a1a1a;border:1px solid #333;border-radius:16px;padding:40px 28px;max-width:340px;width:100%;">
+    <div style="font-size:48px;margin-bottom:16px;">✅</div>
+    <div style="font-family:sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:1px;margin-bottom:8px;">CATÁLOGO LISTO</div>
+    <div style="font-family:sans-serif;font-size:14px;color:#888;margin-bottom:28px;line-height:1.6;">Tocá el botón para abrir el PDF.<br>Luego usá <strong style="color:#fff">⬆ Compartir → Guardar en Archivos</strong> para guardarlo.</div>
+    <button onclick="window.location.href = document.getElementById('pdfDataHolder').value"
+       style="display:block;width:100%;background:#E05A20;color:#fff;border:none;border-radius:8px;padding:16px 24px;font-family:sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;margin-bottom:14px;cursor:pointer;">
+      📄 ABRIR PDF
+    </button>
+    <input type="hidden" id="pdfDataHolder" value="">
+    <button onclick="document.getElementById('pdfModal').style.display='none'"
+       style="background:#2a2a2a;border:1px solid #444;color:#888;border-radius:8px;padding:12px 24px;font-family:sans-serif;font-size:14px;cursor:pointer;width:100%;">
+      Volver a la app
+    </button>
+  </div>
+</div>
+
+<script>
+// ── ESTADO ────────────────────────────────────────────────────────────────
+let lots = [];
+let currentPhotoDataUrl = null;
+let nextLotNumber = 1;
+
+// ── FOTO UPLOAD ────────────────────────────────────────────────────────────
+const photoInputGallery = document.getElementById('photoInputGallery');
+const photoInputCamera = document.getElementById('photoInputCamera');
+const photoPreview = document.getElementById('photoPreview');
+const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+const uploadZone = document.getElementById('uploadZone');
+
+function handlePhotoFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    currentPhotoDataUrl = ev.target.result;
+    photoPreview.src = currentPhotoDataUrl;
+    photoPreview.style.display = 'block';
+    uploadPlaceholder.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+photoInputGallery.addEventListener('change', e => handlePhotoFile(e.target.files[0]));
+photoInputCamera.addEventListener('change', e => handlePhotoFile(e.target.files[0]));
+
+// Drag & drop
+uploadZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  uploadZone.classList.add('drag-over');
+});
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      currentPhotoDataUrl = ev.target.result;
+      photoPreview.src = currentPhotoDataUrl;
+      photoPreview.style.display = 'block';
+      uploadPlaceholder.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// ── AGREGAR LOTE ──────────────────────────────────────────────────────────
+function addLot() {
+  const num = parseInt(document.getElementById('lotNumber').value);
+  const desc = document.getElementById('lotDesc').value.trim();
+  const units = document.getElementById('lotUnits').value.trim();
+
+  if (!desc) { showToast('Escribí la descripción del lote'); return; }
+  if (!currentPhotoDataUrl) { showToast('Agregá una fotografía'); return; }
+
+  // Verificar duplicado
+  if (lots.find(l => l.number === num)) {
+    showToast(`El Lote ${num} ya existe`);
+    return;
+  }
+
+  const lot = {
+    id: Date.now(),
+    number: num,
+    description: desc,
+    units: units,
+    photo: currentPhotoDataUrl
+  };
+
+  lots.push(lot);
+  lots.sort((a, b) => a.number - b.number);
+
+  renderLots();
+  updateCounter();
+  clearForm();
+
+  // Auto-incrementar número de lote
+  nextLotNumber = num + 1;
+  document.getElementById('lotNumber').value = nextLotNumber;
+
+  showToast(`✓ Lote ${num} agregado`);
+}
+
+// ── ELIMINAR LOTE ─────────────────────────────────────────────────────────
+function deleteLot(id) {
+  lots = lots.filter(l => l.id !== id);
+  renderLots();
+  updateCounter();
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────
+function renderLots() {
+  const grid = document.getElementById('lotsGrid');
+  const empty = document.getElementById('emptyState');
+  const bar = document.getElementById('generateBar');
+
+  if (lots.length === 0) {
+    empty.style.display = 'flex';
+    grid.style.display = 'none';
+    bar.classList.remove('visible');
+    return;
+  }
+
+  empty.style.display = 'none';
+  grid.style.display = 'grid';
+  bar.classList.add('visible');
+
+  grid.innerHTML = lots.map(lot => `
+    <div class="lot-card">
+      ${lot.photo
+        ? `<img class="lot-card-photo" src="${lot.photo}" alt="Lote ${lot.number}">`
+        : `<div class="lot-card-photo-placeholder">📦</div>`
+      }
+      <div class="lot-card-body">
+        <div class="lot-card-number">LOTE ${lot.number}</div>
+        <div class="lot-card-desc">${lot.description.replace(/\n/g, '<br>')}</div>
+      </div>
+      <div class="lot-card-footer">
+        <div class="lot-card-units">
+          ${lot.units ? `<strong>${lot.units}</strong> unidades` : 'Sin unidades'}
+        </div>
+        <button class="lot-card-delete" onclick="deleteLot(${lot.id})" title="Eliminar">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateCounter() {
+  document.getElementById('totalLots').textContent = lots.length;
+  document.getElementById('generateCount').textContent = `${lots.length} lote${lots.length !== 1 ? 's' : ''} listo${lots.length !== 1 ? 's' : ''}`;
+  document.getElementById('lotsSubtitle').textContent =
+    lots.length > 0 ? `${lots.length} lote${lots.length > 1 ? 's' : ''} en el catálogo` : 'Agregá lotes desde el panel izquierdo';
+}
+
+// ── LIMPIAR FORM ──────────────────────────────────────────────────────────
+function clearForm() {
+  document.getElementById('lotDesc').value = '';
+  document.getElementById('lotUnits').value = '';
+  photoInputGallery.value = '';
+  photoInputCamera.value = '';
+  photoPreview.src = '';
+  photoPreview.style.display = 'none';
+  uploadPlaceholder.style.display = 'flex';
+  currentPhotoDataUrl = null;
+}
+
+// ── GENERAR PDF ───────────────────────────────────────────────────────────
+async function generatePDF() {
+  if (lots.length === 0) return;
+
+  const btn = document.getElementById('generateBtn');
+  const overlay = document.getElementById('progressOverlay');
+  const fill = document.getElementById('progressFill');
+  const msg = document.getElementById('progressMsg');
+
+  btn.disabled = true;
+  overlay.classList.add('active');
+
+  const { jsPDF } = window.jspdf;
+
+  // Página 1440x810 pts → en jsPDF usamos mm. 1440pts = 508mm, 810pts = 285.75mm
+  // Mejor usar pts directamente
+  const W = 1440;
+  const H = 810;
+
+  const pdf = new jsPDF({
+    orientation: 'landscape',
+    unit: 'pt',
+    format: [W, H]
+  });
+
+  // Colores
+  const DARK   = [26, 26, 26];
+  const ORANGE = [224, 90, 32];
+  const WHITE  = [255, 255, 255];
+  const LGRAY  = [245, 245, 242];
+  const MID    = [136, 136, 136];
+  const BORDER = [50, 50, 50];
+
+  // ── PORTADA ──
+  msg.textContent = 'Generando portada...';
+  fill.style.width = '5%';
+  await sleep(30);
+
+  pdf.setFillColor(...DARK);
+  pdf.rect(0, 0, W, H, 'F');
+
+  // Franja naranja
+  pdf.setFillColor(...ORANGE);
+  pdf.rect(0, H * 0.44, W, 4, 'F');
+
+  // Título
+  pdf.setFillColor(...WHITE);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(58);
+  pdf.setTextColor(...WHITE);
+  pdf.text('EQUIPAMIENTO GASTRONÓMICO', W / 2, H * 0.44 + 75, { align: 'center' });
+
+  pdf.setTextColor(...ORANGE);
+  pdf.setFontSize(46);
+  pdf.text('DE PRIMERA LÍNEA', W / 2, H * 0.44 + 125, { align: 'center' });
+
+  pdf.setTextColor(...MID);
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(22);
+  pdf.text('DÍA 2  ·  PUERTO MADERO', W / 2, H * 0.44 + 175, { align: 'center' });
+  pdf.setFontSize(16);
+  pdf.text('Martes 31 de Marzo  ·  Remate Online  ·  15hs', W / 2, H * 0.44 + 205, { align: 'center' });
+
+  pdf.setTextColor(...ORANGE);
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(14);
+  pdf.text(`${lots.length} LOTES`, W / 2, H - 30, { align: 'center' });
+
+  // ── LOTES ──
+  for (let i = 0; i < lots.length; i++) {
+    const lot = lots[i];
+    const progress = 5 + ((i + 1) / lots.length) * 93;
+    fill.style.width = progress + '%';
+    msg.textContent = `Procesando Lote ${lot.number} (${i + 1}/${lots.length})...`;
+    await sleep(10);
+
+    pdf.addPage([W, H], 'landscape');
+
+    // Fondo general
+    pdf.setFillColor(...LGRAY);
+    pdf.rect(0, 0, W, H, 'F');
+
+    // Header
+    const HEADER_H = 88;
+    pdf.setFillColor(...DARK);
+    pdf.rect(0, 0, W, HEADER_H, 'F');
+
+    // Pill lote
+    const pillW = 210, pillH = 54;
+    const pillX = W / 2 - pillW / 2;
+    const pillY = HEADER_H / 2 - pillH / 2;
+    pdf.setFillColor(...ORANGE);
+    pdf.roundedRect(pillX, pillY, pillW, pillH, 27, 27, 'F');
+    pdf.setTextColor(...WHITE);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(28);
+    pdf.text(`LOTE ${lot.number}`, W / 2, pillY + 34, { align: 'center' });
+
+    // Panel izquierdo
+    const PANEL_W = 400;
+    const GAP = 14;
+    const CONTENT_Y = HEADER_H + GAP;
+    const CONTENT_H = H - CONTENT_Y - GAP;
+
+    pdf.setFillColor(...WHITE);
+    pdf.roundedRect(GAP, CONTENT_Y, PANEL_W - GAP, CONTENT_H, 8, 8, 'F');
+
+    // Acento naranja
+    pdf.setFillColor(...ORANGE);
+    pdf.rect(GAP, CONTENT_Y, 5, CONTENT_H, 'F');
+
+    // Título descripción
+    pdf.setTextColor(...DARK);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(13);
+    pdf.text('DESCRIPCIÓN', 32, CONTENT_Y + 32);
+
+    // Línea
+    pdf.setDrawColor(220, 220, 220);
+    pdf.setLineWidth(0.5);
+    pdf.line(32, CONTENT_Y + 40, PANEL_W - 5, CONTENT_Y + 40);
+
+    // Descripción
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(13);
+    pdf.setTextColor(60, 60, 60);
+    const descLines = lot.description.split('\n').filter(l => l.trim());
+    let yLine = CONTENT_Y + 65;
+    for (const line of descLines) {
+      if (yLine > CONTENT_Y + CONTENT_H - 60) break;
+      const wrapped = pdf.splitTextToSize('• ' + line.trim(), PANEL_W - 50);
+      for (const wl of wrapped) {
+        if (yLine > CONTENT_Y + CONTENT_H - 60) break;
+        pdf.text(wl, 30, yLine);
+        yLine += 20;
+      }
+    }
+
+    // Unidades
+    if (lot.units) {
+      pdf.setFillColor(...ORANGE);
+      pdf.roundedRect(GAP + 8, H - GAP - 46, PANEL_W - GAP - 16, 38, 6, 6, 'F');
+      pdf.setTextColor(...WHITE);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(14);
+      pdf.text(`UNIDADES: ${lot.units}`, (PANEL_W) / 2 + 6, H - GAP - 22, { align: 'center' });
+    }
+
+    // Foto
+    if (lot.photo) {
+      try {
+        const PHOTO_X = PANEL_W + GAP;
+        const PHOTO_W = W - PHOTO_X - GAP;
+        const PHOTO_H = CONTENT_H;
+
+        const imgData = lot.photo;
+        const format = imgData.includes('image/png') ? 'PNG' : 'JPEG';
+
+        // Calcular proporciones
+        const tempImg = await loadImage(lot.photo);
+        const iw = tempImg.width;
+        const ih = tempImg.height;
+        const scale = Math.min(PHOTO_W / iw, PHOTO_H / ih);
+        const dw = iw * scale;
+        const dh = ih * scale;
+        const dx = PHOTO_X + (PHOTO_W - dw) / 2;
+        const dy = CONTENT_Y + (PHOTO_H - dh) / 2;
+
+        pdf.addImage(imgData, format, dx, dy, dw, dh);
+      } catch (e) {
+        console.warn('Error agregando imagen:', e);
+      }
+    }
+  }
+
+  fill.style.width = '100%';
+  msg.textContent = '¡Listo!';
+  await sleep(300);
+
+  // Safari iOS bloquea window.open desde async — mostramos el PDF en modal interno
+  const pdfBase64 = pdf.output('datauristring');
+  document.getElementById('pdfDataHolder').value = pdfBase64;
+  document.getElementById('pdfModal').style.display = 'flex';
+
+  overlay.classList.remove('active');
+  btn.disabled = false;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
