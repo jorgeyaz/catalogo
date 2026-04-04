@@ -646,10 +646,10 @@
     <div style="font-size:48px;margin-bottom:16px;">✅</div>
     <div style="font-family:sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:1px;margin-bottom:8px;">CATÁLOGO LISTO</div>
     <div style="font-family:sans-serif;font-size:14px;color:#888;margin-bottom:28px;line-height:1.6;">Tocá el botón para abrir el PDF.<br>Luego usá <strong style="color:#fff">⬆ Compartir → Guardar en Archivos</strong> para guardarlo.</div>
-    <button onclick="window.location.href = document.getElementById('pdfDataHolder').value"
-       style="display:block;width:100%;background:#E05A20;color:#fff;border:none;border-radius:8px;padding:16px 24px;font-family:sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;margin-bottom:14px;cursor:pointer;">
-      📄 ABRIR PDF
-    </button>
+    <a id="pdfDownloadLink" href="#" download="catalogo_remate.pdf"
+       style="display:block;width:100%;background:#E05A20;color:#fff;text-decoration:none;border-radius:8px;padding:16px 24px;font-family:sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;margin-bottom:14px;cursor:pointer;box-sizing:border-box;">
+      📄 DESCARGAR PDF
+    </a>
     <input type="hidden" id="pdfDataHolder" value="">
     <button onclick="document.getElementById('pdfModal').style.display='none'"
        style="background:#2a2a2a;border:1px solid #444;color:#888;border-radius:8px;padding:12px 24px;font-family:sans-serif;font-size:14px;cursor:pointer;width:100%;">
@@ -990,6 +990,7 @@ async function generatePDF() {
   // Safari iOS bloquea window.open desde async — mostramos el PDF en modal interno
   const pdfBase64 = pdf.output('datauristring');
   document.getElementById('pdfDataHolder').value = pdfBase64;
+  document.getElementById('pdfDownloadLink').href = pdfBase64;
   document.getElementById('pdfModal').style.display = 'flex';
 
   overlay.classList.remove('active');
