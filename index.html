@@ -987,14 +987,37 @@ async function generatePDF() {
   msg.textContent = '¡Listo!';
   await sleep(300);
 
-  // Safari iOS bloquea window.open desde async — mostramos el PDF en modal interno
-  const pdfBase64 = pdf.output('datauristring');
-  document.getElementById('pdfDataHolder').value = pdfBase64;
-  document.getElementById('pdfDownloadLink').href = pdfBase64;
-  document.getElementById('pdfModal').style.display = 'flex';
-
   overlay.classList.remove('active');
   btn.disabled = false;
+
+  // Generar PDF como Blob
+  const pdfBlob = pdf.output('blob');
+  const fecha = new Date().toISOString().slice(0,10);
+  const fileName = 'catalogo_remate_' + fecha + '.pdf';
+  const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+  // Intentar Web Share API (funciona en Safari iOS 15+)
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+    try {
+      await navigator.share({
+        title: 'Catálogo de Remate',
+        files: [pdfFile]
+      });
+      return;
+    } catch(e) {
+      if (e.name !== 'AbortError') console.warn('Share error:', e);
+    }
+  }
+
+  // Fallback: descarga directa
+  const url = URL.createObjectURL(pdfBlob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
