@@ -50,14 +50,24 @@
 
   /* FOTOS GRID */
   .photos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .photo-slot { border: 2px dashed var(--border); border-radius: 8px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; transition: all 0.2s; background: var(--gray); }
+  .photo-slot { border: 2px dashed var(--border); border-radius: 8px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; transition: all 0.2s; background: var(--gray); -webkit-tap-highlight-color: transparent; }
   .photo-slot:hover { border-color: var(--orange); background: rgba(224,90,32,0.06); }
-  .photo-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
-  .photo-slot .slot-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 1px; color: var(--mid); margin-top: 6px; }
-  .photo-slot .slot-plus { font-size: 24px; opacity: 0.4; }
-  .photo-slot .slot-badge { position: absolute; top: 4px; left: 4px; background: var(--orange); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: 1px; }
-  .photo-slot .slot-remove { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: none; align-items: center; justify-content: center; }
-  .photo-slot:hover .slot-remove { display: flex; }
+  .photo-slot:active { border-color: var(--orange); background: rgba(224,90,32,0.12); }
+  .photo-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; pointer-events: none; }
+  .photo-slot .slot-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 1px; color: var(--mid); margin-top: 6px; pointer-events: none; }
+  .photo-slot .slot-plus { font-size: 24px; opacity: 0.4; pointer-events: none; }
+  .photo-slot .slot-badge { position: absolute; top: 4px; left: 4px; background: var(--orange); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: 1px; pointer-events: none; }
+  .photo-slot .slot-remove { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; -webkit-tap-highlight-color: transparent; }
+
+  /* INPUT DE ARCHIVO CENTRALIZADO — invisible, fuera del flujo visual */
+  #fileInputHidden {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
 
   /* LOTS PANEL */
   .lots-panel { padding: 28px 32px; }
@@ -112,6 +122,65 @@
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--darker); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* BOTONES CLOUD en header */
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+  .btn-cloud { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; border: none; cursor: pointer; padding: 8px 14px; border-radius: 4px; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .btn-cloud-save { background: #1a3a5c; color: #64b5f6; border: 1px solid #1e4d7a; }
+  .btn-cloud-save:hover { background: #1e4d7a; color: #fff; }
+  .btn-cloud-load { background: #1a2e1a; color: #81c784; border: 1px solid #2e5c2e; }
+  .btn-cloud-load:hover { background: #2e5c2e; color: #fff; }
+  .btn-export { background: var(--gray); color: var(--mid); border: 1px solid var(--border); }
+  .btn-export:hover { background: #333; color: var(--white); }
+
+  /* MODAL SESIONES */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 400; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--dark); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 480px; overflow: hidden; }
+  .modal-header { background: #111; padding: 20px 24px; border-bottom: 2px solid var(--orange); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--white); }
+  .modal-close { background: none; border: none; color: var(--mid); font-size: 20px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+  .modal-close:hover { color: var(--white); background: var(--gray); }
+  .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .session-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; }
+  .session-item { background: var(--gray); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .session-item:hover { border-color: var(--orange); background: #333; }
+  .session-item-info { flex: 1; }
+  .session-item-title { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); letter-spacing: 1px; }
+  .session-item-meta { font-size: 12px; color: var(--mid); margin-top: 3px; }
+  .session-item-delete { background: none; border: none; color: #555; cursor: pointer; font-size: 16px; padding: 4px 8px; border-radius: 4px; flex-shrink: 0; }
+  .session-item-delete:hover { color: #e74c3c; background: rgba(231,76,60,0.1); }
+  .modal-empty { text-align: center; color: var(--mid); font-size: 14px; padding: 32px 0; }
+  .modal-loading { text-align: center; color: var(--mid); font-size: 14px; padding: 32px 0; }
+  .modal-input-row { display: flex; gap: 8px; }
+  .modal-input { flex: 1; background: var(--gray); border: 1px solid var(--border); border-radius: 6px; color: var(--white); font-family: 'Barlow', sans-serif; font-size: 14px; padding: 10px 14px; outline: none; }
+  .modal-input:focus { border-color: var(--orange); }
+  .modal-section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); }
+
+  /* PANTALLA PIN */
+  .pin-screen { display: none; position: fixed; inset: 0; background: var(--darker); z-index: 500; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
+  .pin-screen.active { display: flex; }
+  .pin-logo { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 3px; color: var(--mid); text-transform: uppercase; text-align: center; }
+  .pin-logo strong { display: block; font-size: 28px; color: var(--white); letter-spacing: 4px; margin-bottom: 4px; }
+  .pin-box { background: var(--dark); border: 1px solid var(--border); border-radius: 14px; padding: 32px 36px; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 320px; }
+  .pin-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--mid); }
+  .pin-input { background: var(--gray); border: 2px solid var(--border); border-radius: 8px; color: var(--white); font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 8px; text-align: center; width: 100%; padding: 14px; outline: none; transition: border-color 0.2s; }
+  .pin-input:focus { border-color: var(--orange); }
+  .pin-input.error { border-color: #e74c3c; animation: shake 0.3s ease; }
+  .pin-error { font-size: 13px; color: #e74c3c; min-height: 18px; }
+  .pin-btn { width: 100%; padding: 14px; font-size: 15px; background: var(--orange); color: var(--white); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.15s; }
+  .pin-btn:hover { background: #c94d18; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
+  /* BANNER DE RESTAURACIÓN */
+  .restore-banner { position: fixed; top: 70px; left: 0; right: 0; z-index: 150; background: #1e2d1e; border-bottom: 2px solid #4caf50; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; transform: translateY(-100%); transition: transform 0.3s ease; }
+  .restore-banner.show { transform: translateY(0); }
+  .restore-banner-text { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; color: #a5d6a7; letter-spacing: 0.5px; line-height: 1.4; }
+  .restore-banner-text strong { color: #fff; display: block; font-size: 16px; margin-bottom: 2px; }
+  .restore-banner-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn-restore { background: #4caf50; color: #fff; border: none; border-radius: 5px; padding: 9px 18px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1px; cursor: pointer; white-space: nowrap; }
+  .btn-discard { background: transparent; color: #888; border: 1px solid #444; border-radius: 5px; padding: 9px 18px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1px; cursor: pointer; white-space: nowrap; }
+  .btn-discard:hover { color: #e74c3c; border-color: #e74c3c; }
 </style>
 </head>
 <body>
@@ -121,8 +190,79 @@
     <div class="logo-icon"><span></span><span></span><span></span></div>
     <div class="logo-text"><strong>CLAUDIO IZSAK</strong>Remates · Catálogo Digital</div>
   </div>
+  <div class="header-actions">
+    <button class="btn-cloud btn-cloud-save" onclick="openSaveModal()" title="Guardar en la nube">☁ Guardar</button>
+    <button class="btn-cloud btn-cloud-load" onclick="openLoadModal()" title="Cargar sesión guardada">📂 Sesiones</button>
+    <button class="btn-cloud btn-export" onclick="exportJSON()" title="Exportar como archivo JSON">⬇ Export</button>
+    <label class="btn-cloud btn-export" style="cursor:pointer;" title="Importar desde archivo JSON">⬆ Import<input type="file" accept=".json" onchange="importJSON(event)" style="display:none;"></label>
+  </div>
   <div class="lot-counter"><strong id="totalLots">0</strong> lotes cargados</div>
 </header>
+
+<!-- PANTALLA PIN -->
+<div class="pin-screen active" id="pinScreen">
+  <div class="pin-logo"><strong>CLAUDIO IZSAK</strong>Remates · Catálogo Digital</div>
+  <div class="pin-box">
+    <div class="pin-label">Ingresá el código de acceso</div>
+    <input class="pin-input" id="pinInput" type="password" maxlength="10" placeholder="••••••" autocomplete="off"
+      onkeydown="if(event.key==='Enter') checkPin()">
+    <div class="pin-error" id="pinError"></div>
+    <button class="pin-btn" onclick="checkPin()">Ingresar</button>
+  </div>
+</div>
+
+<!-- MODAL GUARDAR EN NUBE -->
+<div class="modal-overlay" id="modalSave">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">☁ Guardar en la nube</span>
+      <button class="modal-close" onclick="closeModal('modalSave')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section-label">El catálogo se guarda con el título del remate</div>
+      <div style="background:var(--gray);border:1px solid var(--border);border-radius:8px;padding:14px 16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--mid);letter-spacing:1px;margin-bottom:4px;">TÍTULO DEL REMATE</div>
+        <div id="modalSaveTitulo" style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--white);"></div>
+        <div id="modalSaveMeta" style="font-size:12px;color:var(--mid);margin-top:4px;"></div>
+      </div>
+      <button class="btn btn-orange" style="width:100%;padding:14px;font-size:15px;" onclick="saveToCloud()">☁ Guardar ahora</button>
+      <div id="modalSaveStatus" style="text-align:center;font-size:13px;color:var(--mid);min-height:20px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CARGAR SESIÓN -->
+<div class="modal-overlay" id="modalLoad">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">📂 Sesiones guardadas</span>
+      <button class="modal-close" onclick="closeModal('modalLoad')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section-label">Seleccioná una sesión para cargar</div>
+      <div class="session-list" id="sessionList">
+        <div class="modal-loading">Cargando sesiones...</div>
+      </div>
+      <div id="modalLoadStatus" style="text-align:center;font-size:13px;color:var(--mid);min-height:20px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BANNER DE RESTAURACIÓN -->
+<div class="restore-banner" id="restoreBanner">
+  <div class="restore-banner-text">
+    <strong>📂 Hay una sesión guardada</strong>
+    <span id="restoreBannerInfo">Tenés lotes cargados de una sesión anterior.</span>
+  </div>
+  <div class="restore-banner-actions">
+    <button class="btn-restore" onclick="restoreSession()">↩ Restaurar</button>
+    <button class="btn-discard" onclick="discardSession()">Descartar</button>
+  </div>
+</div>
+
+<!-- INPUT CENTRALIZADO: un solo input de archivo, fuera del DOM visible -->
+<!-- En Android Chrome este approach es más confiable que inputs superpuestos -->
+<input type="file" id="fileInputHidden" accept="image/*" onchange="handleHiddenFileInput(event)">
 
 <div class="main">
   <aside class="form-panel">
@@ -202,7 +342,7 @@
   <div class="progress-title">Generando catálogo...</div>
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
   <div class="progress-msg" id="progressMsg">Preparando...</div>
-  <div style="font-size:12px;color:var(--mid);text-align:center;max-width:280px;line-height:1.6;">Al terminar se abre el PDF en nueva pestaña.<br>Tocá <strong style="color:var(--white)">⬆ Compartir → Guardar en Archivos</strong></div>
+  <div id="progressHint" style="font-size:12px;color:var(--mid);text-align:center;max-width:280px;line-height:1.6;"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -210,9 +350,158 @@
 <script>
 // ── ESTADO ────────────────────────────────────────────────────────────────
 let lots = [];
-let currentPhotos = [null, null, null, null]; // hasta 4 fotos
+let currentPhotos = [null, null, null, null];
 let nextLotNumber = 1;
 const MAX_PHOTOS = 4;
+let activeSlotIndex = -1;
+
+// ── DETECCIÓN DE PLATAFORMA ───────────────────────────────────────────────
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isAndroid = /Android/.test(navigator.userAgent);
+
+// ── PERSISTENCIA ──────────────────────────────────────────────────────────
+const STORAGE_KEY = 'catalogo_izsak_v1';
+
+function saveSession() {
+  try {
+    // Comprimir fotos de lotes a 800px para ahorrar espacio
+    const lotsCompressed = lots.map(lot => ({
+      ...lot,
+      photos: lot.photos // ya están comprimidas al cargar (máx 800px)
+    }));
+    const session = {
+      lots: lotsCompressed,
+      nextLotNumber,
+      remateTitle: document.getElementById('remateTitle').value,
+      remateDate: document.getElementById('remateDate').value,
+      remateTime: document.getElementById('remateTime').value,
+      draft: {
+        lotNumber: document.getElementById('lotNumber').value,
+        desc: document.getElementById('lotDesc').value,
+        units: document.getElementById('lotUnits').value,
+        photos: currentPhotos
+      },
+      savedAt: Date.now()
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+  } catch(e) {
+    // Si falla (cuota excedida), silencioso — no interrumpir el flujo
+    console.warn('No se pudo guardar sesión:', e);
+  }
+}
+
+function loadSavedSession() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const session = JSON.parse(raw);
+    // Solo mostrar banner si hay algo real guardado
+    const hasLots = session.lots && session.lots.length > 0;
+    const hasDraft = session.draft && (session.draft.desc || session.draft.photos.some(p => p));
+    const hasRemate = session.remateTitle && session.remateTitle !== 'Catálogo de Subasta';
+    if (!hasLots && !hasDraft && !hasRemate) return;
+
+    // Construir texto descriptivo para el banner
+    const parts = [];
+    if (hasLots) parts.push(`${session.lots.length} lote${session.lots.length > 1 ? 's' : ''} cargado${session.lots.length > 1 ? 's' : ''}`);
+    if (hasDraft) parts.push('borrador en progreso');
+    if (session.remateTitle && session.remateTitle !== 'Catálogo de Subasta') parts.push(`remate: "${session.remateTitle}"`);
+    const fecha = session.savedAt ? new Date(session.savedAt).toLocaleString('es-AR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+    document.getElementById('restoreBannerInfo').textContent =
+      parts.join(' · ') + (fecha ? ` — guardado ${fecha}` : '');
+
+    document.getElementById('restoreBanner').classList.add('show');
+  } catch(e) {
+    console.warn('Error al leer sesión guardada:', e);
+  }
+}
+
+function restoreSession() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const session = JSON.parse(raw);
+
+    // Restaurar datos del remate
+    if (session.remateTitle) document.getElementById('remateTitle').value = session.remateTitle;
+    if (session.remateDate) document.getElementById('remateDate').value = session.remateDate;
+    if (session.remateTime) document.getElementById('remateTime').value = session.remateTime;
+
+    // Restaurar lotes
+    if (session.lots) {
+      lots = session.lots;
+      renderLots();
+      updateCounter();
+    }
+
+    // Restaurar borrador
+    if (session.draft) {
+      if (session.draft.lotNumber) document.getElementById('lotNumber').value = session.draft.lotNumber;
+      if (session.draft.desc) document.getElementById('lotDesc').value = session.draft.desc;
+      if (session.draft.units) document.getElementById('lotUnits').value = session.draft.units;
+      if (session.draft.photos) {
+        currentPhotos = session.draft.photos;
+        for (let i = 0; i < MAX_PHOTOS; i++) renderSlot(i);
+      }
+    }
+
+    if (session.nextLotNumber) nextLotNumber = session.nextLotNumber;
+
+    hideBanner();
+    showToast('✓ Sesión restaurada');
+  } catch(e) {
+    console.warn('Error al restaurar sesión:', e);
+    showToast('No se pudo restaurar la sesión');
+  }
+}
+
+function discardSession() {
+  localStorage.removeItem(STORAGE_KEY);
+  hideBanner();
+  showToast('Sesión descartada');
+}
+
+function hideBanner() {
+  document.getElementById('restoreBanner').classList.remove('show');
+}
+
+// Guardar automáticamente con debounce (no guardar en cada tecla, sino 1s después)
+let saveTimer = null;
+function scheduleSave() {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveSession, 1000);
+}
+
+// Guardar también cuando el usuario sale o cambia de pestaña
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') saveSession();
+});
+window.addEventListener('pagehide', saveSession);
+
+// ── INPUT DE ARCHIVO CENTRALIZADO ────────────────────────────────────────
+// Un solo <input type="file"> en el DOM, activado por JS.
+// Esto evita el bug de Android Chrome donde inputs superpuestos con opacity:0
+// a veces no disparan el selector de archivos/cámara correctamente.
+
+function openFileForSlot(index) {
+  activeSlotIndex = index;
+  const input = document.getElementById('fileInputHidden');
+  // Resetear el valor para que onChange dispare aunque elijan la misma foto
+  input.value = '';
+  input.click();
+}
+
+function handleHiddenFileInput(event) {
+  const file = event.target.files[0];
+  if (!file || activeSlotIndex < 0) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    currentPhotos[activeSlotIndex] = ev.target.result;
+    renderSlot(activeSlotIndex);
+    scheduleSave();
+  };
+  reader.readAsDataURL(file);
+}
 
 // ── INICIALIZAR SLOTS DE FOTOS ────────────────────────────────────────────
 function initPhotoSlots() {
@@ -222,10 +511,15 @@ function initPhotoSlots() {
     const slot = document.createElement('div');
     slot.className = 'photo-slot';
     slot.id = `slot-${i}`;
+    // onclick en el div: abre el input centralizado
+    slot.onclick = (e) => {
+      // Si el click viene del botón eliminar, no abrir selector
+      if (e.target.classList.contains('slot-remove')) return;
+      openFileForSlot(i);
+    };
     slot.innerHTML = `
       <span class="slot-plus">+</span>
       <span class="slot-label">${i === 0 ? 'PRINCIPAL' : `FOTO ${i + 1}`}</span>
-      <input type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;" onchange="handleSlotFile(event, ${i})">
     `;
     grid.appendChild(slot);
   }
@@ -239,34 +533,22 @@ function renderSlot(index) {
       <img src="${photo}" alt="Foto ${index + 1}">
       <span class="slot-badge">${index === 0 ? 'PRINCIPAL' : index + 1}</span>
       <button class="slot-remove" onclick="removePhoto(event, ${index})">✕</button>
-      <input type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;z-index:0;" onchange="handleSlotFile(event, ${index})">
     `;
   } else {
     slot.innerHTML = `
       <span class="slot-plus">+</span>
       <span class="slot-label">${index === 0 ? 'PRINCIPAL' : `FOTO ${index + 1}`}</span>
-      <input type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;" onchange="handleSlotFile(event, ${index})">
     `;
   }
-  // Mostrar/ocultar botón IA si hay al menos foto principal
+  // Mostrar/ocultar botón IA
   document.getElementById('btnIA').style.display = currentPhotos[0] ? 'flex' : 'none';
-}
-
-function handleSlotFile(event, index) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    currentPhotos[index] = ev.target.result;
-    renderSlot(index);
-  };
-  reader.readAsDataURL(file);
 }
 
 function removePhoto(event, index) {
   event.stopPropagation();
   currentPhotos[index] = null;
   renderSlot(index);
+  scheduleSave();
 }
 
 // ── AGREGAR LOTE ──────────────────────────────────────────────────────────
@@ -289,12 +571,14 @@ function addLot() {
   nextLotNumber = num + 1;
   document.getElementById('lotNumber').value = nextLotNumber;
   showToast(`✓ Lote ${num} agregado`);
+  saveSession(); // guardar inmediatamente al agregar lote
 }
 
 function deleteLot(id) {
   lots = lots.filter(l => l.id !== id);
   renderLots();
   updateCounter();
+  saveSession();
 }
 
 function renderLots() {
@@ -404,8 +688,20 @@ async function generatePDF() {
   const overlay = document.getElementById('progressOverlay');
   const fill = document.getElementById('progressFill');
   const msg = document.getElementById('progressMsg');
+  const hint = document.getElementById('progressHint');
+
   btn.disabled = true;
   overlay.classList.add('active');
+
+  // Mensaje de espera según plataforma
+  if (isIOS) {
+    hint.innerHTML = 'Al terminar se abre el PDF en nueva pestaña.<br>Tocá <strong style="color:var(--white)">⬆ Compartir → Guardar en Archivos</strong>';
+  } else if (isAndroid) {
+    hint.innerHTML = 'Al terminar se descargará el PDF.<br>Buscalo en <strong style="color:var(--white)">Descargas</strong> de tu dispositivo.';
+  } else {
+    hint.innerHTML = 'El PDF se descargará automáticamente.';
+  }
+
   const { jsPDF } = window.jspdf;
   const W = 1440, H = 810;
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: [W, H] });
@@ -447,7 +743,7 @@ async function generatePDF() {
   pdf.setDrawColor(...ORANGE); pdf.setLineWidth(2);
   pdf.line(TXT_X, H * 0.71, TXT_X + 380, H * 0.71);
 
-  // ── LOTES: una página por foto ──
+  // ── LOTES ──
   let pageCount = 0;
   for (let i = 0; i < lots.length; i++) {
     const lot = lots[i];
@@ -464,7 +760,6 @@ async function generatePDF() {
       pdf.addPage([W, H], 'landscape');
       pdf.setFillColor(...LGRAY); pdf.rect(0, 0, W, H, 'F');
 
-      // Header
       const HEADER_H = 85;
       pdf.setFillColor(...DARK); pdf.rect(0, 0, W, HEADER_H, 'F');
       pdf.setDrawColor(...ORANGE); pdf.setLineWidth(2); pdf.line(0, HEADER_H, W, HEADER_H);
@@ -480,7 +775,6 @@ async function generatePDF() {
       pdf.line(W / 2 - 52, 14, W / 2 - 52, HEADER_H - 14);
       pdf.line(W / 2 + 52, 14, W / 2 + 52, HEADER_H - 14);
 
-      // Indicador de foto (ej: 2/3) en header derecho
       if (totalPages > 1) {
         pdf.setTextColor(136, 136, 136); pdf.setFont('helvetica', 'normal'); pdf.setFontSize(10);
         pdf.text(`FOTO ${p + 1} / ${totalPages}`, W - 36, HEADER_H / 2 + 4, { align: 'right' });
@@ -491,7 +785,6 @@ async function generatePDF() {
       const CONTENT_Y = HEADER_H + GAP;
       const CONTENT_H = H - CONTENT_Y - GAP;
 
-      // Panel descripción solo en la primera página del lote
       if (p === 0) {
         pdf.setFillColor(...WHITE); pdf.roundedRect(GAP, CONTENT_Y, PANEL_W - GAP, CONTENT_H, 8, 8, 'F');
         pdf.setFillColor(...ORANGE); pdf.rect(GAP, CONTENT_Y, 5, CONTENT_H, 'F');
@@ -518,7 +811,6 @@ async function generatePDF() {
         }
       }
 
-      // Foto
       const photoSrc = photos[p];
       if (photoSrc) {
         try {
@@ -562,18 +854,46 @@ async function generatePDF() {
   const pdfBlob = pdf.output('blob');
   const fecha = new Date().toISOString().slice(0,10);
   const fileName = 'catalogo_remate_' + fecha + '.pdf';
-  const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
-  if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-    try { await navigator.share({ title: 'Catálogo de Remate', files: [pdfFile] }); return; }
-    catch(e) { if (e.name !== 'AbortError') console.warn('Share error:', e); }
+  // ── ESTRATEGIA DE DESCARGA SEGÚN PLATAFORMA ───────────────────────────
+  // iOS: Web Share API con archivo (el más confiable en Safari iOS)
+  // Android y desktop: descarga directa con <a download> (Chrome lo maneja bien)
+  // Fallback: abrir en nueva pestaña
+
+  if (isIOS) {
+    // iOS Safari: intentar share primero, fallback a blob URL
+    const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+      try {
+        await navigator.share({ title: 'Catálogo de Remate', files: [pdfFile] });
+        return;
+      } catch(e) {
+        if (e.name === 'AbortError') return; // usuario canceló, está bien
+        // Si falla por otro motivo, caer al blob URL
+      }
+    }
+    // Fallback iOS: abrir en nueva pestaña
+    const url = URL.createObjectURL(pdfBlob);
+    window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+  } else {
+    // Android / Desktop: descarga directa con <a download>
+    // Esto funciona en Chrome Android y en todos los browsers de escritorio
+    const url = URL.createObjectURL(pdfBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    // Pequeño delay antes de remover para que el click se procese
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1000);
+    showToast('✓ PDF descargando...');
   }
-  const url = URL.createObjectURL(pdfBlob);
-  const a = document.createElement('a');
-  a.href = url; a.download = fileName;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -592,8 +912,277 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// ── SUPABASE ──────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://gjsybqqwwwjntkobpodg.supabase.co';
+const SUPA_KEY = 'sb_publishable_N9daPMK4JxgWAdigPhrYyA_JB2voiQf';
+
+function supaHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SUPA_KEY,
+    'Authorization': 'Bearer ' + SUPA_KEY,
+    'Prefer': 'return=representation'
+  };
+}
+
+function buildSessionData() {
+  return {
+    lots,
+    nextLotNumber,
+    remateTitle: document.getElementById('remateTitle').value,
+    remateDate: document.getElementById('remateDate').value,
+    remateTime: document.getElementById('remateTime').value,
+    draft: {
+      lotNumber: document.getElementById('lotNumber').value,
+      desc: document.getElementById('lotDesc').value,
+      units: document.getElementById('lotUnits').value,
+      photos: currentPhotos
+    },
+    savedAt: Date.now()
+  };
+}
+
+function applySessionData(session) {
+  if (session.remateTitle) document.getElementById('remateTitle').value = session.remateTitle;
+  if (session.remateDate) document.getElementById('remateDate').value = session.remateDate;
+  if (session.remateTime) document.getElementById('remateTime').value = session.remateTime;
+  if (session.lots) { lots = session.lots; renderLots(); updateCounter(); }
+  if (session.nextLotNumber) nextLotNumber = session.nextLotNumber;
+  if (session.draft) {
+    if (session.draft.lotNumber) document.getElementById('lotNumber').value = session.draft.lotNumber;
+    if (session.draft.desc) document.getElementById('lotDesc').value = session.draft.desc;
+    if (session.draft.units) document.getElementById('lotUnits').value = session.draft.units;
+    if (session.draft.photos) {
+      currentPhotos = session.draft.photos;
+      for (let i = 0; i < MAX_PHOTOS; i++) renderSlot(i);
+    }
+  }
+}
+
+// ── MODAL GUARDAR ─────────────────────────────────────────────────────────
+function openSaveModal() {
+  const titulo = document.getElementById('remateTitle').value || 'Sin título';
+  document.getElementById('modalSaveTitulo').textContent = titulo;
+  const meta = [];
+  const fecha = document.getElementById('remateDate').value;
+  const hora = document.getElementById('remateTime').value;
+  if (fecha) meta.push(fecha);
+  if (hora) meta.push(hora);
+  meta.push(`${lots.length} lote${lots.length !== 1 ? 's' : ''}`);
+  document.getElementById('modalSaveMeta').textContent = meta.join(' · ');
+  document.getElementById('modalSaveStatus').textContent = '';
+  document.getElementById('modalSave').classList.add('active');
+}
+
+async function saveToCloud() {
+  const titulo = document.getElementById('remateTitle').value.trim();
+  if (!titulo || titulo === 'Catálogo de Subasta') {
+    document.getElementById('modalSaveStatus').textContent = '⚠ Primero escribí el título del remate';
+    document.getElementById('modalSaveStatus').style.color = '#ffb74d';
+    return;
+  }
+  const statusEl = document.getElementById('modalSaveStatus');
+  statusEl.style.color = 'var(--mid)';
+  statusEl.textContent = 'Guardando...';
+
+  try {
+    const datos = buildSessionData();
+    // Upsert: si ya existe el título, actualiza; si no, inserta
+    const res = await fetch(`${SUPA_URL}/rest/v1/catalogo_sesiones?titulo=eq.${encodeURIComponent(titulo)}`, {
+      method: 'GET', headers: supaHeaders()
+    });
+    const existing = await res.json();
+
+    let r;
+    if (existing && existing.length > 0) {
+      // Update
+      r = await fetch(`${SUPA_URL}/rest/v1/catalogo_sesiones?titulo=eq.${encodeURIComponent(titulo)}`, {
+        method: 'PATCH',
+        headers: supaHeaders(),
+        body: JSON.stringify({ datos, updated_at: new Date().toISOString() })
+      });
+    } else {
+      // Insert
+      r = await fetch(`${SUPA_URL}/rest/v1/catalogo_sesiones`, {
+        method: 'POST',
+        headers: supaHeaders(),
+        body: JSON.stringify({ titulo, datos })
+      });
+    }
+
+    if (r.ok) {
+      statusEl.style.color = '#81c784';
+      statusEl.textContent = '✓ Guardado en la nube';
+      setTimeout(() => closeModal('modalSave'), 1200);
+      showToast('☁ Sesión guardada en la nube');
+    } else {
+      throw new Error('Error HTTP ' + r.status);
+    }
+  } catch(e) {
+    statusEl.style.color = '#e57373';
+    statusEl.textContent = '✗ Error al guardar. Revisá la conexión.';
+    console.error(e);
+  }
+}
+
+// ── MODAL CARGAR ──────────────────────────────────────────────────────────
+async function openLoadModal() {
+  document.getElementById('modalLoad').classList.add('active');
+  document.getElementById('sessionList').innerHTML = '<div class="modal-loading">Cargando sesiones...</div>';
+  document.getElementById('modalLoadStatus').textContent = '';
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/catalogo_sesiones?select=id,titulo,updated_at&order=updated_at.desc`, {
+      headers: supaHeaders()
+    });
+    const sessions = await res.json();
+    renderSessionList(sessions);
+  } catch(e) {
+    document.getElementById('sessionList').innerHTML = '<div class="modal-empty">Error al conectar con la nube.</div>';
+    console.error(e);
+  }
+}
+
+function renderSessionList(sessions) {
+  const list = document.getElementById('sessionList');
+  if (!sessions || sessions.length === 0) {
+    list.innerHTML = '<div class="modal-empty">No hay sesiones guardadas todavía.</div>';
+    return;
+  }
+  list.innerHTML = sessions.map(s => {
+    const fecha = new Date(s.updated_at).toLocaleString('es-AR', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+    return `
+      <div class="session-item">
+        <div class="session-item-info" onclick="loadFromCloud('${s.id}', '${s.titulo.replace(/'/g,"\\'")}')">
+          <div class="session-item-title">${s.titulo}</div>
+          <div class="session-item-meta">Guardado: ${fecha}</div>
+        </div>
+        <button class="session-item-delete" onclick="deleteCloudSession('${s.id}', '${s.titulo.replace(/'/g,"\\'")}')">✕</button>
+      </div>
+    `;
+  }).join('');
+}
+
+async function loadFromCloud(id, titulo) {
+  document.getElementById('modalLoadStatus').textContent = 'Cargando...';
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/catalogo_sesiones?id=eq.${id}&select=datos`, {
+      headers: supaHeaders()
+    });
+    const rows = await res.json();
+    if (!rows || rows.length === 0) throw new Error('No encontrado');
+    applySessionData(rows[0].datos);
+    closeModal('modalLoad');
+    showToast(`✓ Sesión "${titulo}" cargada`);
+    saveSession(); // sync al localStorage también
+  } catch(e) {
+    document.getElementById('modalLoadStatus').textContent = '✗ Error al cargar la sesión.';
+    console.error(e);
+  }
+}
+
+async function deleteCloudSession(id, titulo) {
+  if (!confirm(`¿Eliminar la sesión "${titulo}" de la nube?`)) return;
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/catalogo_sesiones?id=eq.${id}`, {
+      method: 'DELETE', headers: supaHeaders()
+    });
+    showToast(`Sesión "${titulo}" eliminada`);
+    openLoadModal(); // refrescar lista
+  } catch(e) {
+    showToast('Error al eliminar');
+    console.error(e);
+  }
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// ── EXPORT / IMPORT JSON ──────────────────────────────────────────────────
+function exportJSON() {
+  const titulo = document.getElementById('remateTitle').value || 'catalogo';
+  const datos = buildSessionData();
+  const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+  const fecha = new Date().toISOString().slice(0,10);
+  const fileName = `catalogo_${titulo.replace(/\s+/g,'-')}_${fecha}.json`;
+
+  if (isIOS) {
+    const file = new File([blob], fileName, { type: 'application/json' });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ title: fileName, files: [file] });
+      return;
+    }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = fileName;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('⬇ JSON exportado');
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const datos = JSON.parse(ev.target.result);
+      if (!datos.lots) throw new Error('Formato inválido');
+      if (!confirm(`¿Cargar la sesión "${datos.remateTitle || 'sin título'}"?\nSe reemplazará el catálogo actual.`)) return;
+      applySessionData(datos);
+      saveSession();
+      showToast('✓ Sesión importada desde JSON');
+    } catch(e) {
+      showToast('✗ Archivo JSON inválido');
+      console.error(e);
+    }
+  };
+  reader.readAsText(file);
+  // Reset para permitir importar el mismo archivo dos veces
+  event.target.value = '';
+}
+
+// ── PIN DE ACCESO ─────────────────────────────────────────────────────────
+const PIN_CORRECTO = 'ci2026';
+const PIN_SESSION_KEY = 'catalogo_pin_ok';
+
+function checkPin() {
+  const input = document.getElementById('pinInput');
+  const errorEl = document.getElementById('pinError');
+  if (input.value === PIN_CORRECTO) {
+    sessionStorage.setItem(PIN_SESSION_KEY, '1');
+    document.getElementById('pinScreen').classList.remove('active');
+    errorEl.textContent = '';
+  } else {
+    input.classList.add('error');
+    errorEl.textContent = 'Código incorrecto';
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 400);
+  }
+}
+
+function initPin() {
+  // Si ya ingresó el PIN en esta sesión del navegador, no pedir de nuevo
+  if (sessionStorage.getItem(PIN_SESSION_KEY) === '1') {
+    document.getElementById('pinScreen').classList.remove('active');
+  } else {
+    document.getElementById('pinScreen').classList.add('active');
+    setTimeout(() => document.getElementById('pinInput').focus(), 100);
+  }
+}
+
 // Init
+initPin();
 initPhotoSlots();
+loadSavedSession();
+
+// Guardar borrador al tipear en los campos
+['lotDesc','lotUnits','lotNumber','remateTitle','remateDate','remateTime'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', scheduleSave);
+});
 </script>
 </body>
 </html>
